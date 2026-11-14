@@ -8,11 +8,30 @@ from pydantic import BaseModel, Field
 from fastapi import FastAPI, HTTPException
 from database import get_connection
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="BijliWise API",
     description="Smart Energy. Smart Pakistan.",
     version="1.0.0"
 )
+
+# CORS configuration
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5175",
+    "http://127.0.0.1:5175",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
+
 class BillCreate(BaseModel):
     consumer_reference: str = Field(min_length=1, max_length=50)
     billing_month: date

@@ -3,6 +3,11 @@ import Card, { CardHeader } from "../ui/Card";
 import DemoBadge from "../ui/DemoBadge";
 import { fmtKwh, fmtPKR } from "../../utils/format";
 
+const STATUS_STYLES = {
+  Due: "bg-amber-400/10 text-amber-300",
+  Overdue: "bg-rose-500/10 text-rose-400",
+};
+
 export default function RecentBills({ bills, title = "Recent bills", subtitle = "Issue date, units and amount", action }) {
   return (
     <Card>
@@ -20,7 +25,7 @@ export default function RecentBills({ bills, title = "Recent bills", subtitle = 
               <p className="text-sm font-semibold">{fmtPKR(b.bill)}</p>
               <p className="text-xs text-muted">{fmtKwh(b.kwh)}</p>
             </div>
-            <span className={`hidden rounded-full px-2 py-0.5 text-xs font-semibold sm:inline ${b.status === "Due" ? "bg-amber-400/10 text-amber-300" : "bg-brand/10 text-brand"}`}>{b.status}</span>
+            <span className={`hidden rounded-full px-2 py-0.5 text-xs font-semibold sm:inline ${STATUS_STYLES[b.status] ?? "bg-brand/10 text-brand"}`}>{b.status}</span>
           </li>
         ))}
       </ul>
