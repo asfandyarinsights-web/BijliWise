@@ -3,6 +3,7 @@ import Sidebar from "./components/layout/Sidebar";
 import Topbar from "./components/layout/Topbar";
 import DashboardPage from "./pages/DashboardPage";
 import BillsPage from "./pages/BillsPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import { navItems } from "./data/navigation";
 
@@ -24,7 +25,8 @@ export default function App() {
         <main className="thin-scroll flex-1 overflow-y-auto p-4 md:p-8">
           {page === "dashboard" && <DashboardPage search={search} onNavigate={go} />}
           {page === "bills" && <BillsPage search={search} />}
-          {!["dashboard", "bills"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
+          {page === "analytics" && <AnalyticsPage onNavigate={go} />}
+          {!["dashboard", "bills", "analytics"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
         </main>
       </div>
     </div>
