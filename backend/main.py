@@ -60,6 +60,45 @@ def health_check():
     }
 
 
+@app.get("/api/analytics/monthly")
+def get_monthly_analytics():
+    connection = None
+
+    try:
+        connection = get_connection()
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    DATE_FORMAT(billing_month, '%Y-%m') AS month,
+                    SUM(units_consumed) AS total_units,
+                    SUM(total_amount) AS total_expense,
+                    COUNT(*) AS total_bills
+                FROM electricity_bills
+                GROUP BY YEAR(billing_month), MONTH(billing_month)
+                ORDER BY YEAR(billing_month) ASC,
+                         MONTH(billing_month) ASC
+            """)
+
+            monthly_data = cursor.fetchall()
+
+        return {
+            "success": True,
+            "total_months": len(monthly_data),
+            "analytics": monthly_data
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not retrieve monthly analytics: {str(error)}"
+        )
+
+    finally:
+        if connection:
+            connection.close()
+
+
 @app.get("/api/bills")
 def get_all_bills():
     connection = None
