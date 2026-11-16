@@ -4,7 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
     <title>bijliwise-app</title>
+    <script>
+      // Applies the saved theme before the first paint so a reload never flashes the wrong colours.
+      // Keep the storage key and theme names in sync with src/utils/preferences.js.
+      (function () {
+        var theme = "dark";
+        try {
+          var raw = window.localStorage.getItem("bijliwise.preferences.v1");
+          var saved = raw ? JSON.parse(raw) : null;
+          if (saved && typeof saved.theme === "string") theme = saved.theme;
+        } catch (e) {}
+        if (["system", "light", "dark", "oled"].indexOf(theme) === -1) theme = "dark";
+        if (theme === "system") {
+          theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -4,6 +4,8 @@ import RecentBills from "../components/dashboard/RecentBills";
 import AddBillForm from "../components/bills/AddBillForm";
 import { deleteBill, getBills } from "../services/api";
 import { fmtKwh, fmtPKR } from "../utils/format";
+import { formatDisplayDate } from "../utils/dateFormat";
+import { getActivePreferences } from "../utils/preferences";
 
 export function filterBills(bills, query) {
   const q = query.trim().toLowerCase();
@@ -36,15 +38,7 @@ function formatMonth(dateString) {
 }
 
 function formatDate(dateString) {
-  if (!dateString) return "Not available";
-
-  const date = new Date(`${dateString}T00:00:00`);
-
-  return date.toLocaleDateString("en-PK", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return formatDisplayDate(dateString, getActivePreferences().dateFormat);
 }
 
 export function mapBill(bill) {

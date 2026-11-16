@@ -1,6 +1,6 @@
 import { Download } from "lucide-react";
 
-const RANGES = [3, 6, 12];
+const RANGES = [3, 6, 12, "all"];
 
 export default function FilterBar({ range, onRange, months, monthIndex, onMonth, onExport, disabled = false }) {
   return (
@@ -9,7 +9,7 @@ export default function FilterBar({ range, onRange, months, monthIndex, onMonth,
         {RANGES.map((r) => (
           <button key={r} onClick={() => onRange(r)} aria-pressed={range === r}
             className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${range === r ? "bg-brand text-base" : "text-muted hover:text-ink"}`}>
-            {r}M
+            {r === "all" ? "All" : `${r}M`}
           </button>
         ))}
       </div>

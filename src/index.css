@@ -1,16 +1,49 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
+/* Default tokens = the Dark theme (dark charcoal). Light and Black/OLED override them below. */
 @theme {
-  --color-base: #07111f;
-  --color-surface: #101c2d;
-  --color-raised: #16253a;
+  --color-base: #171a20;
+  --color-surface: #20252d;
+  --color-raised: #2b313b;
   --color-brand: #10b981;
   --color-ink: #f8fafc;
-  --color-muted: #94a3b8;
+  --color-muted: #9aa5b4;
   --color-line: rgb(148 163 184 / 0.14);
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
+
+/* The app sets data-theme="light" | "dark" | "oled" on <html> (see PreferencesProvider and index.html). */
+:root { color-scheme: dark; }
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-base: #f3f5f8;
+  --color-surface: #ffffff;
+  --color-raised: #eaeef3;
+  --color-brand: #046c4e;
+  --color-ink: #0f172a;
+  --color-muted: #4b5a6e;
+  --color-line: rgb(15 23 42 / 0.12);
+}
+
+/* True black page. Cards are a clearly lighter dark grey with a stronger border so they stay visible. */
+:root[data-theme="oled"] {
+  color-scheme: dark;
+  --color-base: #000000;
+  --color-surface: #0c0f14;
+  --color-raised: #181c23;
+  --color-muted: #a1a9b5;
+  --color-line: rgb(255 255 255 / 0.14);
+}
+
+/* Light theme: shades chosen for dark surfaces (pale rose, amber, emerald) are too faint on white,
+   so these utilities get darker equivalents. Dark and Black/OLED keep the original shades. */
+:root[data-theme="light"] :is(.text-rose-300, .text-rose-400, .hover\:text-rose-400:hover) { color: #be123c; }
+:root[data-theme="light"] :is(.text-amber-200, .text-amber-300) { color: #b45309; }
+:root[data-theme="light"] .text-emerald-400 { color: #046c4e; }
+:root[data-theme="light"] .shadow-black\/25 { --tw-shadow-color: rgb(15 23 42 / 0.08); }
+:root[data-theme="light"] :is(.shadow-xl, .shadow-2xl) { --tw-shadow-color: rgb(15 23 42 / 0.16); }
 
 html, body, #root { height: 100%; }
 body {

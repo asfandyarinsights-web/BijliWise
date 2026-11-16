@@ -9,6 +9,7 @@ import MonthlyAnalyticsTable from "../components/analytics/MonthlyAnalyticsTable
 import { exportAnalyticsCsv } from "../utils/exportCsv";
 import { describePeriod, filterByPeriod, normalizeMonthly, resolveRange, summarize } from "../utils/analytics";
 import { getMonthlyAnalytics } from "../services/api";
+import { usePreferences } from "../context/preferencesContext";
 
 export default function AnalyticsPage({ onNavigate }) {
   const [months, setMonths] = useState([]);
@@ -18,7 +19,8 @@ export default function AnalyticsPage({ onNavigate }) {
   const [refreshing, setRefreshing] = useState(false);
   const [reloadCount, setReloadCount] = useState(0);
 
-  const [period, setPeriod] = useState("6");
+  const { preferences } = usePreferences();
+  const [period, setPeriod] = useState(() => preferences.defaultPeriod);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 

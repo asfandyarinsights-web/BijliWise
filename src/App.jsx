@@ -4,6 +4,7 @@ import Topbar from "./components/layout/Topbar";
 import DashboardPage from "./pages/DashboardPage";
 import BillsPage from "./pages/BillsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import SettingsPage from "./pages/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import { navItems } from "./data/navigation";
 
@@ -26,7 +27,8 @@ export default function App() {
           {page === "dashboard" && <DashboardPage search={search} onNavigate={go} />}
           {page === "bills" && <BillsPage search={search} />}
           {page === "analytics" && <AnalyticsPage onNavigate={go} />}
-          {!["dashboard", "bills", "analytics"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
+          {page === "settings" && <SettingsPage onNavigate={go} />}
+          {!["dashboard", "bills", "analytics", "settings"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
         </main>
       </div>
     </div>

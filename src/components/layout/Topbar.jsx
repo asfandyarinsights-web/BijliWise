@@ -44,7 +44,7 @@ export default function Topbar({ title, subtitle, search, onSearch, onMenu }) {
         <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand/15 text-sm font-bold text-brand">DU</span>
         <div className="hidden leading-tight sm:block">
           <p className="text-sm font-semibold">Demo User</p>
-          <p className="text-xs text-muted">Household account</p>
+          <p className="text-xs text-muted">Demo profile</p>
         </div>
       </div>
     </header>

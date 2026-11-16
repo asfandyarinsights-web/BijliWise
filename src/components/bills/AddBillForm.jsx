@@ -75,7 +75,7 @@ function Field({ name, label, icon: Icon, error, hint, as: Control = "input", ch
           name={name}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full rounded-xl border bg-base py-2.5 pl-10 pr-3 text-sm text-ink placeholder:text-muted [color-scheme:dark] focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-60 ${
+          className={`w-full rounded-xl border bg-base py-2.5 pl-10 pr-3 text-sm text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-60 ${
             error ? "border-rose-500/60" : "border-line focus:border-brand/50"
           }`}
           {...props}

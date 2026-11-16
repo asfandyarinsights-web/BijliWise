@@ -2,12 +2,13 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, ReferenceLine, Responsiv
 import Card, { CardHeader } from "../ui/Card";
 import ChartTooltip from "../charts/ChartTooltip";
 import StatTile from "./StatTile";
+import { useChartColors } from "../../hooks/useChartColors";
 import { compactNumber } from "../../utils/analytics";
 import { fmtPKR } from "../../utils/format";
 
-const AXIS = { fill: "#94a3b8", fontSize: 12 };
-
 export default function ExpenseAnalysis({ rows, summary }) {
+  const colors = useChartColors();
+  const axis = { fill: colors.axis, fontSize: 12 };
   const showAverage = rows.length >= 2;
 
   return (
@@ -27,12 +28,12 @@ export default function ExpenseAnalysis({ rows, summary }) {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={rows} margin={{ top: 5, right: 12, left: -4, bottom: 0 }}>
-                  <CartesianGrid stroke="rgb(148 163 184 / 0.12)" vertical={false} />
-                  <XAxis dataKey="label" tick={AXIS} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={16} />
-                  <YAxis tick={AXIS} axisLine={false} tickLine={false} tickFormatter={compactNumber} />
-                  <Tooltip content={<ChartTooltip format={fmtPKR} />} cursor={{ stroke: "#10b981", strokeOpacity: 0.3 }} />
-                  <Line type="monotone" dataKey="expense" stroke="#10b981" strokeWidth={2.5}
-                    dot={{ r: 4, fill: "#10b981", stroke: "#10b981" }} />
+                  <CartesianGrid stroke={colors.grid} vertical={false} />
+                  <XAxis dataKey="label" tick={axis} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={16} />
+                  <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={compactNumber} />
+                  <Tooltip content={<ChartTooltip format={fmtPKR} />} cursor={{ stroke: colors.brand, strokeOpacity: 0.3 }} />
+                  <Line type="monotone" dataKey="expense" stroke={colors.brand} strokeWidth={2.5}
+                    dot={{ r: 4, fill: colors.brand, stroke: colors.brand }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -43,12 +44,12 @@ export default function ExpenseAnalysis({ rows, summary }) {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={rows} margin={{ top: 5, right: 12, left: -4, bottom: 0 }}>
-                  <CartesianGrid stroke="rgb(148 163 184 / 0.12)" vertical={false} />
-                  <XAxis dataKey="label" tick={AXIS} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={16} />
-                  <YAxis tick={AXIS} axisLine={false} tickLine={false} tickFormatter={compactNumber} />
-                  <Tooltip content={<ChartTooltip format={fmtPKR} />} cursor={{ fill: "rgb(148 163 184 / 0.08)" }} />
-                  <Bar dataKey="expense" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={34} />
-                  {showAverage && <ReferenceLine y={summary.avgExpense} stroke="#94a3b8" strokeDasharray="4 4" />}
+                  <CartesianGrid stroke={colors.grid} vertical={false} />
+                  <XAxis dataKey="label" tick={axis} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={16} />
+                  <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={compactNumber} />
+                  <Tooltip content={<ChartTooltip format={fmtPKR} />} cursor={{ fill: colors.cursor }} />
+                  <Bar dataKey="expense" fill={colors.brand} radius={[6, 6, 0, 0]} maxBarSize={34} />
+                  {showAverage && <ReferenceLine y={summary.avgExpense} stroke={colors.average} strokeDasharray="4 4" />}
                 </BarChart>
               </ResponsiveContainer>
             </div>

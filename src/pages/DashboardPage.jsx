@@ -11,6 +11,7 @@ import { exportCsv } from "../utils/exportCsv";
 import { pctChange } from "../utils/format";
 import { filterBills, mapBill } from "./BillsPage";
 import { getBills, getMonthlyAnalytics } from "../services/api";
+import { usePreferences } from "../context/preferencesContext";
 
 const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -134,7 +135,8 @@ export default function DashboardPage({ search = "", onNavigate, refreshKey = 0 
   const [loading, setLoading] = useState(true);
   const [reloadCount, setReloadCount] = useState(0);
 
-  const [range, setRange] = useState(6);
+  const { preferences } = usePreferences();
+  const [range, setRange] = useState(() => (preferences.defaultPeriod === "all" ? "all" : Number(preferences.defaultPeriod)));
   const [selectedMonthId, setSelectedMonthId] = useState(null);
 
   const retry = useCallback(() => {
@@ -181,7 +183,7 @@ export default function DashboardPage({ search = "", onNavigate, refreshKey = 0 
   }, [reloadCount, refreshKey]);
 
   // Only the months that really exist, never padded to fill the range.
-  const chartData = useMemo(() => analytics.slice(-range), [analytics, range]);
+  const chartData = useMemo(() => (range === "all" ? analytics : analytics.slice(-range)), [analytics, range]);
 
   // Falls back to the latest month if nothing is selected or the selection disappeared.
   const selectedIndex = useMemo(() => {
