@@ -117,3 +117,18 @@ export async function getMonthlyAnalytics() {
 
   return data.analytics;
 }
+
+export async function getEnergyInsights() {
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/insights/energy`);
+  } catch {
+    throw new Error(UNREACHABLE_MESSAGE);
+  }
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, `Failed to fetch energy insights (server error ${response.status}).`));
+  }
+
+  return response.json();
+}

@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from fastapi import FastAPI, HTTPException
 from database import get_connection
+from insights import build_energy_insights
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -92,6 +93,44 @@ def get_monthly_analytics():
         raise HTTPException(
             status_code=500,
             detail=f"Could not retrieve monthly analytics: {str(error)}"
+        )
+
+    finally:
+        if connection:
+            connection.close()
+
+
+@app.get("/api/insights/energy")
+def get_energy_insights():
+    connection = None
+
+    try:
+        connection = get_connection()
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    consumer_reference,
+                    billing_month,
+                    units_consumed,
+                    total_amount,
+                    payment_status
+                FROM electricity_bills
+                ORDER BY billing_month ASC, consumer_reference ASC
+            """)
+
+            bills = cursor.fetchall()
+
+        # All calculations are in insights.py (plain Python, no extra dependencies).
+        return {
+            "success": True,
+            **build_energy_insights(bills)
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not retrieve energy insights: {str(error)}"
         )
 
     finally:

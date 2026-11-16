@@ -7,6 +7,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import SettingsPage from "./pages/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import { navItems } from "./data/navigation";
+import InsightsPage from "./pages/InsightsPage";
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
@@ -28,7 +29,8 @@ export default function App() {
           {page === "bills" && <BillsPage search={search} />}
           {page === "analytics" && <AnalyticsPage onNavigate={go} />}
           {page === "settings" && <SettingsPage onNavigate={go} />}
-          {!["dashboard", "bills", "analytics", "settings"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
+          {page === "insights" && <InsightsPage onNavigate={go} />}
+          {!["dashboard", "bills", "analytics", "settings", "insights"].includes(page) && <PlaceholderPage item={item} onNavigate={go} />}
         </main>
       </div>
     </div>
