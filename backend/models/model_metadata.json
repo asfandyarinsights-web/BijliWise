@@ -1,0 +1,68 @@
+{
+  "model_name": "RandomForestRegressor (scikit-learn)",
+  "model_version": "1.0.0",
+  "dataset_type": "synthetic_demo",
+  "trained_at_utc": "2026-11-19T03:44:00+00:00",
+  "model_file": "consumption_model.joblib",
+  "model_sha256": "c27667d69c6f8f1d5ffe291e3aca43cd0d7046489b63a93c2f17aaa3099020e3",
+  "environment": {
+    "sklearn_version": "1.9.1",
+    "python": "3.13.15"
+  },
+  "feature_schema": [
+    "household_size",
+    "month",
+    "month_sin",
+    "month_cos",
+    "is_summer",
+    "lag_1",
+    "lag_2",
+    "lag_3",
+    "roll_mean_3",
+    "roll_mean_6"
+  ],
+  "min_history_months": 6,
+  "target": "units_consumed",
+  "training_config": {
+    "algorithm_params": {
+      "n_estimators": 300,
+      "min_samples_leaf": 2,
+      "max_features": 0.7,
+      "random_state": 42,
+      "n_jobs": 1
+    },
+    "split_month": "2025-01",
+    "forecasting": "recursive multi-step",
+    "horizons": [
+      1,
+      3,
+      6
+    ]
+  },
+  "dataset": {
+    "records": 1800,
+    "households": 50,
+    "date_range": {
+      "start": "2023-01",
+      "end": "2025-12"
+    },
+    "source_file": "synthetic_electricity_usage.csv"
+  },
+  "training_period": {
+    "start": "2023-07",
+    "end": "2024-12"
+  },
+  "evaluation_period": {
+    "start": "2025-01",
+    "end": "2025-12"
+  },
+  "model_card": {
+    "intended_use": "Classroom/exhibition demonstration of an ML forecasting workflow in BijliWise.",
+    "limitations": [
+      "Trained only on simulated households, not real meter readings.",
+      "Recursive multi-month forecasts accumulate error.",
+      "Does not model tariffs, outages, appliances, or real weather."
+    ],
+    "disclaimer": "This model is trained and evaluated using synthetic demonstration data. Its performance does not establish accuracy on real Pakistani electricity consumers."
+  }
+}

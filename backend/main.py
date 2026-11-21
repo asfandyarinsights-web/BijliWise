@@ -5,9 +5,20 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Path, Query
 from database import get_connection
 from insights import build_energy_insights
+from demo_predictions import router as demo_router
+from predictions import (
+    ALLOWED_HORIZONS,
+    REQUIRED_OBSERVATIONS,
+    build_forecast,
+    build_readiness,
+    is_valid_horizon,
+    load_model,
+    model_artifact_found,
+    summarize_households,
+)
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -32,6 +43,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Synthetic Demo Mode (CSV + trained model; does not use MySQL)
+app.include_router(demo_router)
 
 class BillCreate(BaseModel):
     consumer_reference: str = Field(min_length=1, max_length=50)
@@ -136,6 +150,116 @@ def get_energy_insights():
     finally:
         if connection:
             connection.close()
+
+
+def fetch_prediction_rows(consumer_reference=None):
+    """Bills used by the Predictions module. One household when a reference is given."""
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            if consumer_reference is None:
+                cursor.execute("""
+                    SELECT consumer_reference, billing_month, units_consumed, total_amount
+                    FROM electricity_bills
+                    ORDER BY consumer_reference ASC, billing_month ASC
+                """)
+            else:
+                cursor.execute("""
+                    SELECT consumer_reference, billing_month, units_consumed, total_amount
+                    FROM electricity_bills
+                    WHERE consumer_reference = %s
+                    ORDER BY billing_month ASC
+                """, (consumer_reference,))
+
+            return cursor.fetchall()
+
+    finally:
+        connection.close()
+
+
+@app.get("/api/predictions/households")
+def get_prediction_households():
+    try:
+        summary = summarize_households(fetch_prediction_rows())
+        model = load_model()
+
+        return {
+            "success": True,
+            "required_observations": REQUIRED_OBSERVATIONS,
+            "allowed_horizons": list(ALLOWED_HORIZONS),
+            "model": {
+                "artifact_found": model_artifact_found(),
+                "trained": model is not None,
+                "validated": model is not None and getattr(model, "validated", False) is True
+            },
+            **summary
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not retrieve prediction households: {str(error)}"
+        )
+
+
+@app.get("/api/predictions/readiness/{consumer_reference}")
+def get_prediction_readiness(consumer_reference: str = Path(min_length=1, max_length=50)):
+    try:
+        readiness = build_readiness(
+            consumer_reference,
+            fetch_prediction_rows(consumer_reference),
+            load_model()
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not check forecasting readiness: {str(error)}"
+        )
+
+    if readiness is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No bills were found for this household reference."
+        )
+
+    return {"success": True, **readiness}
+
+
+@app.get("/api/predictions/forecast/{consumer_reference}")
+def get_prediction_forecast(
+    consumer_reference: str = Path(min_length=1, max_length=50),
+    horizon: int = Query(1)
+):
+    if not is_valid_horizon(horizon):
+        raise HTTPException(
+            status_code=422,
+            detail="Forecast horizon must be 1, 3 or 6 months."
+        )
+
+    try:
+        forecast = build_forecast(
+            consumer_reference,
+            fetch_prediction_rows(consumer_reference),
+            horizon,
+            load_model()
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not generate forecast: {str(error)}"
+        )
+
+    if forecast is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No bills were found for this household reference."
+        )
+
+    # available is False (with the reason) unless a validated model produced real predictions.
+    return {"success": True, **forecast}
 
 
 @app.get("/api/bills")

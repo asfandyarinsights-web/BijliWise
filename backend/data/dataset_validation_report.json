@@ -1,0 +1,33 @@
+{
+  "total_records": 1800,
+  "total_households": 50,
+  "date_range": {
+    "start": "2023-01",
+    "end": "2025-12"
+  },
+  "missing_values": {
+    "consumer_reference": 0,
+    "billing_month": 0,
+    "household_size": 0,
+    "city": 0,
+    "season": 0,
+    "month": 0,
+    "previous_month_consumption": 0,
+    "units_consumed": 0
+  },
+  "duplicate_household_months": 0,
+  "fully_duplicated_rows": 0,
+  "consumption_kwh": {
+    "min": 115.8,
+    "max": 1016.1,
+    "mean": 325.92
+  },
+  "observations_per_household": {
+    "min": 36,
+    "max": 36
+  },
+  "negative_values": 0,
+  "passed": true,
+  "problems": [],
+  "seed": 42
+}

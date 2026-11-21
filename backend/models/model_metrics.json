@@ -1,0 +1,52 @@
+{
+  "evaluation_type": "chronological hold-out on synthetic data",
+  "one_step_ahead": {
+    "mae": 23.3604,
+    "rmse": 33.2578,
+    "r2": 0.9359,
+    "mape_percent": 6.917
+  },
+  "persistence_baseline_one_step": {
+    "mae": 41.7835,
+    "rmse": 61.9307,
+    "r2": 0.7779,
+    "mape_percent": 11.8927
+  },
+  "recursive_horizon_backtest": {
+    "1": {
+      "mae": 23.3603,
+      "rmse": 33.2577,
+      "baseline_mae": 41.7835,
+      "baseline_rmse": 61.9307,
+      "n_forecast_points": 600
+    },
+    "3": {
+      "mae": 30.4036,
+      "rmse": 42.9676,
+      "baseline_mae": 75.8323,
+      "baseline_rmse": 109.5191,
+      "n_forecast_points": 1500
+    },
+    "6": {
+      "mae": 37.8594,
+      "rmse": 52.4881,
+      "baseline_mae": 91.123,
+      "baseline_rmse": 128.0373,
+      "n_forecast_points": 2100
+    }
+  },
+  "feature_importance": {
+    "lag_1": 0.6298,
+    "roll_mean_3": 0.1486,
+    "month_cos": 0.0788,
+    "roll_mean_6": 0.0388,
+    "lag_2": 0.033,
+    "month": 0.0244,
+    "household_size": 0.0169,
+    "month_sin": 0.012,
+    "lag_3": 0.0115,
+    "is_summer": 0.0062
+  },
+  "train_rows": 900,
+  "evaluation_rows": 600
+}

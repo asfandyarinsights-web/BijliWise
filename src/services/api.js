@@ -132,3 +132,46 @@ export async function getEnergyInsights() {
 
   return response.json();
 }
+
+async function getJson(path, failure) {
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`);
+  } catch {
+    throw new Error(UNREACHABLE_MESSAGE);
+  }
+
+  if (!response.ok) {
+    throw await responseError(response, `${failure} (server error ${response.status}).`);
+  }
+
+  return response.json();
+}
+
+export const getPredictionHouseholds = () =>
+  getJson("/api/predictions/households", "Failed to load households");
+
+export const getPredictionReadiness = (consumerReference) =>
+  getJson(`/api/predictions/readiness/${encodeURIComponent(consumerReference)}`, "Failed to check forecasting readiness");
+
+export const getForecast = (consumerReference, horizon) =>
+  getJson(
+    `/api/predictions/forecast/${encodeURIComponent(consumerReference)}?horizon=${encodeURIComponent(horizon)}`,
+    "Failed to load the forecast"
+  );
+
+// ---- Synthetic Demo Mode (does not use MySQL data)
+export const getDemoHouseholds = () =>
+  getJson("/api/predictions/demo/households", "Failed to load synthetic households");
+
+export const getDemoHistory = (consumerReference) =>
+  getJson(`/api/predictions/demo/history/${encodeURIComponent(consumerReference)}`, "Failed to load synthetic history");
+
+export const getDemoForecast = (consumerReference, horizon) =>
+  getJson(
+    `/api/predictions/demo/forecast/${encodeURIComponent(consumerReference)}?horizon=${encodeURIComponent(horizon)}`,
+    "Failed to generate the demo forecast"
+  );
+
+export const getModelMetrics = () =>
+  getJson("/api/predictions/model-metrics", "Failed to load model metrics");

@@ -22,3 +22,10 @@ backend/*.pyc
 # Operating system
 .DS_Store
 Thumbs.db
+
+# BijliWise ML
+backend/models/*.joblib
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
