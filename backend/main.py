@@ -9,6 +9,8 @@ from fastapi import FastAPI, HTTPException, Path, Query
 from database import get_connection
 from insights import build_energy_insights
 from demo_predictions import router as demo_router
+from demo_user import router as demo_user_router
+from notifications import router as notifications_router, notify_bill_created, notify_bill_overdue
 from predictions import (
     ALLOWED_HORIZONS,
     REQUIRED_OBSERVATIONS,
@@ -40,12 +42,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
 
 # Synthetic Demo Mode (CSV + trained model; does not use MySQL)
 app.include_router(demo_router)
+app.include_router(demo_user_router)       # read-only Demo User API (no MySQL)
+app.include_router(notifications_router)
 
 class BillCreate(BaseModel):
     consumer_reference: str = Field(min_length=1, max_length=50)
@@ -369,6 +373,9 @@ def create_bill(bill: BillCreate):
 
         connection.commit()
 
+        # Never raises: a notification problem must not fail a saved bill.
+        notify_bill_created(bill_id, bill.consumer_reference, bill.billing_month, bill.units_consumed)
+
         return {
             "success": True,
             "message": "Electricity bill added successfully",
@@ -402,7 +409,7 @@ def update_bill(bill_id: int, bill: BillUpdate):
         with connection.cursor() as cursor:
             # First, check whether the bill exists
             cursor.execute(
-                "SELECT id FROM electricity_bills WHERE id = %s",
+                "SELECT id, payment_status FROM electricity_bills WHERE id = %s",
                 (bill_id,)
             )
 
@@ -438,6 +445,9 @@ def update_bill(bill_id: int, bill: BillUpdate):
             ))
 
         connection.commit()
+
+        if bill.payment_status == "Overdue" and existing_bill["payment_status"] != "Overdue":
+            notify_bill_overdue(bill_id, bill.consumer_reference, bill.billing_month)
 
         return {
             "success": True,

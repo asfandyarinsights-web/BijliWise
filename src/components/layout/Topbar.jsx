@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { Bell, Menu, Search } from "lucide-react";
-import { notifications } from "../../data/demoData";
+import { Menu, Search } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
-export default function Topbar({ title, subtitle, search, onSearch, onMenu }) {
-  const [open, setOpen] = useState(false);
+export default function Topbar({ title, subtitle, search, onSearch, onMenu, isDemo = false, onNavigate }) {
   return (
     <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-base/85 px-4 backdrop-blur md:px-8">
       <button onClick={onMenu} className="rounded-xl border border-line p-2 text-muted hover:text-ink lg:hidden" aria-label="Open menu"><Menu size={20} /></button>
@@ -18,33 +16,13 @@ export default function Topbar({ title, subtitle, search, onSearch, onMenu }) {
           className="w-60 rounded-xl border border-line bg-surface py-2 pl-9 pr-3 text-sm placeholder:text-muted focus:border-brand/50 focus:outline-none" />
       </label>
 
-      <div className="relative">
-        <button onClick={() => setOpen((o) => !o)} aria-label="Notifications" aria-expanded={open}
-          className="relative rounded-xl border border-line bg-surface p-2.5 text-muted transition hover:text-ink">
-          <Bell size={18} />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand" />
-        </button>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden="true" />
-            <div className="absolute right-0 z-40 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 shadow-2xl">
-              <p className="px-3 py-2 text-sm font-semibold">Notifications <span className="text-xs font-normal text-amber-300">(demo)</span></p>
-              {notifications.map((n) => (
-                <div key={n.id} className="rounded-xl px-3 py-2 hover:bg-raised/60">
-                  <p className="text-sm">{n.text}</p>
-                  <p className="text-xs text-muted">{n.time}</p>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+      <NotificationBell key={isDemo ? "demo" : "real"} isDemo={isDemo} onNavigate={onNavigate} />
 
       <div className="flex items-center gap-3 rounded-xl border border-line bg-surface py-1.5 pl-1.5 pr-1.5 sm:pr-3">
-        <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand/15 text-sm font-bold text-brand">DU</span>
+        <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand/15 text-sm font-bold text-brand">{isDemo ? "DU" : "HH"}</span>
         <div className="hidden leading-tight sm:block">
-          <p className="text-sm font-semibold">Demo User</p>
-          <p className="text-xs text-muted">Demo profile</p>
+          <p className="text-sm font-semibold">{isDemo ? "Demo User" : "My household"}</p>
+          <p className="text-xs text-muted">{isDemo ? "Demo profile" : "Saved bills"}</p>
         </div>
       </div>
     </header>

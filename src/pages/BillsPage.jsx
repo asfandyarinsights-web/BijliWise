@@ -3,6 +3,7 @@ import { AlertCircle, CheckCircle2, Loader2, Pencil, Plus, Trash2, X } from "luc
 import RecentBills from "../components/dashboard/RecentBills";
 import AddBillForm from "../components/bills/AddBillForm";
 import { deleteBill, getBills } from "../services/api";
+import { useDemoMode } from "../context/demoModeContext";
 import { fmtKwh, fmtPKR } from "../utils/format";
 import { formatDisplayDate } from "../utils/dateFormat";
 import { getActivePreferences } from "../utils/preferences";
@@ -141,6 +142,7 @@ function ConfirmDeleteDialog({ bill, deleting, error, onConfirm, onCancel }) {
 }
 
 export default function BillsPage({ search = "" }) {
+  const { isDemo } = useDemoMode();
   const [rawBills, setRawBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -282,7 +284,7 @@ export default function BillsPage({ search = "" }) {
               ? "No bills saved yet. Use Add bill to save your first one."
               : "No bills match your search. Try a month, a consumer reference or a status."
           }
-          renderActions={(b) => (
+          renderActions={(b) => isDemo ? <span className="text-xs text-muted">Read-only</span> : (
             <>
               <button
                 type="button"
@@ -304,7 +306,7 @@ export default function BillsPage({ search = "" }) {
               </button>
             </>
           )}
-          action={
+          action={isDemo ? undefined :
             <button
               onClick={() => setFormMode((m) => (m ? null : { type: "create" }))}
               aria-expanded={Boolean(formMode)}

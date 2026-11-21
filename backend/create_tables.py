@@ -1,5 +1,6 @@
 
 from database import get_connection
+from notifications import ensure_table as ensure_notifications_table
 
 
 def create_electricity_bills_table():
@@ -39,3 +40,9 @@ def create_electricity_bills_table():
 
 if __name__ == "__main__":
     create_electricity_bills_table()
+    _connection = get_connection()
+    try:
+        ensure_notifications_table(_connection)  # idempotent; never drops or alters data
+        print("SUCCESS: notifications table is ready!")
+    finally:
+        _connection.close()

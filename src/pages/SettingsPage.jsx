@@ -6,6 +6,7 @@ import ThemeSelector from "../components/settings/ThemeSelector";
 import OptionGroup from "../components/settings/OptionGroup";
 import ConfirmResetDialog from "../components/settings/ConfirmResetDialog";
 import { usePreferences } from "../context/preferencesContext";
+import { useDemoMode } from "../context/demoModeContext";
 import { DEFAULT_PREFERENCES } from "../utils/preferences";
 import { formatDisplayDate } from "../utils/dateFormat";
 import pkg from "../../package.json";
@@ -42,6 +43,7 @@ function FixedRow({ icon: Icon, label, value }) {
 
 export default function SettingsPage({ onNavigate }) {
   const { preferences, resolvedTheme, storageOk, setPreference, resetPreferences } = usePreferences();
+  const { isDemo } = useDemoMode();
   const [notice, setNotice] = useState("");
   const [confirmingReset, setConfirmingReset] = useState(false);
 
@@ -130,12 +132,12 @@ export default function SettingsPage({ onNavigate }) {
 
       <SettingsSection icon={User} title="Profile and about" description="Application information.">
         <div className="flex items-center gap-3 rounded-xl border border-line bg-raised/40 p-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand/15 text-sm font-bold text-brand">DU</span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand/15 text-sm font-bold text-brand">{isDemo ? "DU" : "HH"}</span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold">Demo User</p>
-            <p className="text-xs text-muted">Household account</p>
+            <p className="text-sm font-semibold">{isDemo ? "Demo User" : "My household"}</p>
+            <p className="text-xs text-muted">{isDemo ? "Fictional demo household (DEMO-1001)" : "Household account"}</p>
           </div>
-          <span className="rounded-full border border-line px-2 py-0.5 text-xs font-semibold text-muted">Demo profile</span>
+          <span className="rounded-full border border-line px-2 py-0.5 text-xs font-semibold text-muted">{isDemo ? "Demo profile" : "Local profile"}</span>
         </div>
         <p className="text-sm text-muted">
           BijliWise has no sign-in or account system yet, so this name is a placeholder rather than a real user record.

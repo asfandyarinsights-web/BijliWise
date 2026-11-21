@@ -9,6 +9,7 @@ import ModelReadiness, { StatusPill } from "../components/predictions/ModelReadi
 import HistoricalOverview from "../components/predictions/HistoricalOverview";
 import PredictionEducation from "../components/predictions/PredictionEducation";
 import DemoMode from "../components/predictions/DemoMode";
+import { useDemoMode } from "../context/demoModeContext";
 import { getForecast, getPredictionHouseholds, getPredictionReadiness } from "../services/api";
 import { normalizeForecast, normalizeHouseholds, normalizeReadiness } from "../utils/predictions";
 
@@ -175,6 +176,9 @@ const MODES = [
 // Two separate modes: real MySQL households, or the synthetic demo dataset. Never mixed.
 export default function PredictionsPage({ onNavigate }) {
   const [mode, setMode] = useState("real");
+  const { isDemo } = useDemoMode();
+  // In Demo Mode the real-household tab is never offered, so real data cannot be requested.
+  if (isDemo) return <DemoMode />;
   return (
     <div className="space-y-6">
       <div role="group" aria-label="Prediction mode" className="inline-flex rounded-xl border border-line bg-surface p-1">

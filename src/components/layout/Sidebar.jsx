@@ -1,7 +1,7 @@
-import { ChevronsLeft, ChevronsRight, X, Zap } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, FlaskConical, LogOut, X, Zap } from "lucide-react";
 import { navItems } from "../../data/navigation";
 
-export default function Sidebar({ active, onNavigate, collapsed, onToggle, mobileOpen, onClose }) {
+export default function Sidebar({ active, onNavigate, collapsed, onToggle, mobileOpen, onClose, isDemo = false, onToggleDemo }) {
   return (
     <>
       {mobileOpen && <div className="fixed inset-0 z-30 bg-black/60 lg:hidden" onClick={onClose} aria-hidden="true" />}
@@ -34,6 +34,15 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle, mobil
             );
           })}
         </nav>
+
+        <div className="border-t border-line p-3">
+          <button onClick={onToggleDemo} title={isDemo ? "Exit demo" : "Explore demo"}
+            className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${collapsed ? "lg:justify-center" : ""} ${
+              isDemo ? "border-amber-400/30 bg-amber-400/10 text-amber-300 hover:bg-amber-400/15" : "border-line text-muted hover:border-brand/40 hover:text-brand"}`}>
+            {isDemo ? <LogOut size={19} className="shrink-0" /> : <FlaskConical size={19} className="shrink-0" />}
+            <span className={collapsed ? "lg:hidden" : ""}>{isDemo ? "Exit demo" : "Explore demo"}</span>
+          </button>
+        </div>
 
         <div className="hidden border-t border-line p-3 lg:block">
           <button onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
