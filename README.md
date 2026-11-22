@@ -601,7 +601,7 @@ These are possible future directions, not completed features.
 ## Author and Academic Information
 | | |
 |---|---|
-| Author | Asfandyar Chandio |
+| Author | AsfandYar Chandio |
 | Degree | BS Information Technology |
 | Department | Department of Information Technology |
 | University | Shaheed Benazir Bhutto University, Shaheed Benazirabad, Sindh, Pakistan |
